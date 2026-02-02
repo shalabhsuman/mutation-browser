@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Conda
+.env
+.venv
+conda-env/
+
+# Data (generated / local)
+data/mutations.csv
+
+# OS
+.DS_Store
+
+# Node (later)
+node_modules/
