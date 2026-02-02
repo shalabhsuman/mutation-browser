@@ -28,9 +28,11 @@ deployment to cloud environments.
 
 ```mermaid
 flowchart TD
+
   A[Mutation data (batch ingestion)] --> B[PostgreSQL variants table]
   B --> C[Flask API: /variants, /health]
   C --> D[Clients: CLI / Frontend]
+  
   ```
 
 This diagram illustrates the flow of mutation data from ingestion through
