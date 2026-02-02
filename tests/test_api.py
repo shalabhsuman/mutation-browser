@@ -24,3 +24,6 @@ def test_variants_with_gene(client):
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, list)
+    for row in data:
+        assert "gene" in row
+        assert "variant" in row
