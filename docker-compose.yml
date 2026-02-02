@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: mutation-browser-postgres
+    environment:
+      POSTGRES_DB: mutation_browser
+      POSTGRES_USER: mutation_user
+      POSTGRES_PASSWORD: mutation_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  api:
+    image: shalabhsuman/mutation-browser-api:0.1.0
+    container_name: mutation-browser-api
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: mutation_browser
+      DB_USER: mutation_user
+      DB_PASSWORD: mutation_pass
+      DB_HOST: postgres
+      DB_PORT: 5432
+    ports:
+      - "8000:5000"
+
+volumes:
+  postgres_data:

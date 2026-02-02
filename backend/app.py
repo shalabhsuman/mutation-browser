@@ -4,21 +4,22 @@ import os
 
 app = Flask(__name__)
 
-# Database connection settings
-DB_NAME = "mutation_browser"
-DB_USER = os.getenv("USER")   # your macOS username
-DB_HOST = "localhost"
-DB_PORT = 5432
+# Database connection settings (environment-based)
+DB_NAME = os.getenv("DB_NAME", "mutation_browser")
+DB_USER = os.getenv("DB_USER", os.getenv("USER"))
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = int(os.getenv("DB_PORT", "5432"))
 
 
 def get_connection():
     return psycopg2.connect(
         dbname=DB_NAME,
         user=DB_USER,
+        password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT
     )
-
 
 @app.route("/health", methods=["GET"])
 def health():
@@ -63,4 +64,4 @@ def get_variants():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=False)
