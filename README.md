@@ -1,8 +1,11 @@
 # Mutation Browser
 
-Mutation Browser is a backend system for storing and querying structured genomic
-mutation data. The system consists of a relational database for persistence and
-a web API for programmatic access to mutation records.
+Mutation Browser is a full-stack web application for storing, querying, and
+interactively exploring structured genomic mutation data. The system combines
+a relational database, a backend web API and a browser-based user interface.
+
+It is designed to demonstrate a clean, modular architecture for data ingestion,
+persistence and downstream consumption.
 
 ---
 
@@ -13,10 +16,11 @@ The Mutation Browser system provides:
 - A PostgreSQL-backed data model for mutation records
 - A batch ingestion mechanism for loading mutation data into the database
 - A Flask-based web API for querying mutations
-- A clean separation between data storage, application logic, and presentation
+- A React-based frontend for interactive exploration
+- Containerized deployment using Docker and Docker Compose
 
-The architecture is modular and designed to support extension, scaling, and
-deployment to cloud environments.
+The architecture cleanly separates data storage, application logic, and
+presentation, and is suitable for local development as well as cloud deployment.
 
 ---
 
@@ -24,12 +28,14 @@ deployment to cloud environments.
 
 - Mutation records are stored in a PostgreSQL database.
 - A Flask API queries the database using parameterized SQL.
-- Clients consume API responses over HTTP.
+- A React frontend consumes API responses over HTTP.
+- Services are orchestrated locally using Docker Compose.
 
 <img src="docs/architecture.png" alt="Architecture diagram" height="500" width="300"/>
 
 This diagram illustrates the flow of mutation data from ingestion through
-persistent storage and into a stateless web API consumed by downstream 
+persistent storage and into a stateless web API, which is then consumed by a
+browser-based client.
 
 ---
 
@@ -37,6 +43,9 @@ persistent storage and into a stateless web API consumed by downstream
 
 - `backend/`  
   Flask web service implementing the API layer
+
+- `frontend/`  
+  React application providing an interactive user interface
 
 - `db/`  
   Database schema definitions
@@ -47,11 +56,8 @@ persistent storage and into a stateless web API consumed by downstream
 - `scripts/`  
   Operational and maintenance scripts
 
-- `frontend/`  
-  Frontend application
-
 - `docker/`  
-  Containerization assets
+  Containerization documentation and assets
 ---
 
 ## Database schema
@@ -78,3 +84,27 @@ The schema is defined in `db/schema.sql`.
 
 - `GET /variants?gene=<GENE>`  
   Returns mutation records for the specified gene as JSON
+
+---
+
+## User interface
+
+The frontend provides a browser-based interface for querying mutation records
+by gene name and inspecting results in tabular form, including a count of
+matching samples.
+
+The frontend communicates directly with the backend API and demonstrates
+end-to-end data flow from database to user-facing application.
+
+---
+
+## Running the system locally
+
+The backend API and database are run using Docker Compose, while the frontend
+is served via a local development server.
+
+At a high level:
+- Docker Compose starts the API and PostgreSQL services
+- The React frontend runs locally and queries the API over HTTP
+
+Detailed run instructions are provided in the respective component directories.
