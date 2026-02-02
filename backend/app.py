@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import psycopg2
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 # Database connection settings (environment-based)
 DB_NAME = os.getenv("DB_NAME", "mutation_browser")
