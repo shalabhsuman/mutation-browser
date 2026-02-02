@@ -26,14 +26,7 @@ deployment to cloud environments.
 - A Flask API queries the database using parameterized SQL.
 - Clients consume API responses over HTTP.
 
-```mermaid
-flowchart TD
-
-  A[Mutation data (batch ingestion)] --> B[PostgreSQL variants table]
-  B --> C[Flask API: /variants, /health]
-  C --> D[Clients: CLI / Frontend]
-  
-  ```
+<img src="docs/architecture.png" alt="Architecture diagram" height="500" width="300"/>
 
 This diagram illustrates the flow of mutation data from ingestion through
 persistent storage and into a stateless web API consumed by downstream 
