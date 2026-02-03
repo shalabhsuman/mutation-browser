@@ -9,12 +9,12 @@ persistence and downstream consumption.
 
 ## Tech Stack
 
-- **Frontend:** React 19, Vite 7, JavaScript (ES Modules), ESLint
+- **Frontend:** React (SPA), Vite
 - **Backend:** Python, Flask, Flask-CORS, Gunicorn
-- **Database:** PostgreSQL 16
+- **Database:** PostgreSQL
 - **Data Access:** psycopg2 (PostgreSQL driver)
 - **Infra/DevOps:** Docker, Docker Compose
-- **Architecture:** REST API (Flask) + SPA frontend (React)
+- **Architecture:** REST API (Flask) + Single-Page Application frontend (React)
 
 ---
 
