@@ -7,6 +7,15 @@ a relational database, a backend web API and a browser-based user interface.
 It is designed to demonstrate a clean, modular architecture for data ingestion,
 persistence and downstream consumption.
 
+## Tech Stack
+
+- **Frontend:** React 19, Vite 7, JavaScript (ES Modules), ESLint
+- **Backend:** Python, Flask, Flask-CORS, Gunicorn
+- **Database:** PostgreSQL 16
+- **Data Access:** psycopg2 (PostgreSQL driver)
+- **Infra/DevOps:** Docker, Docker Compose
+- **Architecture:** REST API (Flask) + SPA frontend (React)
+
 ---
 
 ## Overview
