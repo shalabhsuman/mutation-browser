@@ -3,7 +3,8 @@
 Mutation Browser is a full-stack web application for storing, querying, and
 interactively exploring structured genomic mutation data. The system combines
 a relational database, a backend web API, a browser-based user interface, and
-asynchronous query logging.
+asynchronous query logging, with deployment options via Docker Compose or
+Kubernetes (Minikube).
 
 It is designed to demonstrate a clean, modular architecture for data ingestion,
 persistence, asynchronous processing, and downstream consumption.
