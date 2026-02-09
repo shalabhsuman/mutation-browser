@@ -65,7 +65,7 @@ This diagram illustrates the flow of mutation data from ingestion through
 persistent storage and into a stateless web API, which is then consumed by a
 browser-based client.
 
-<img src="docs/architecture-k8s.png" alt="Kubernetes deployment diagram" height="500" width="600"/>
+<img src="docs/architecture-k8s.png" alt="Kubernetes deployment diagram" height="600" width="400"/>
 
 This diagram illustrates the Kubernetes (Minikube) deployment view, showing
 services, deployments, and the worker/broker flow.
