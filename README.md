@@ -221,6 +221,21 @@ Steps:
 13. Switch Docker back to host:
    - `eval $(minikube docker-env -u)`
 
+### Stop and resume (Minikube)
+
+- Stop everything:
+  - `minikube stop`
+- Resume later (no code changes):
+  - `minikube start --driver=docker`
+  - `kubectl port-forward svc/api 8000:8000`
+- If you rebuilt code:
+  - `eval $(minikube docker-env)`
+  - `docker build -t mutation-browser-api:local .`
+  - `kubectl apply -f k8s/`
+  - `kubectl port-forward svc/api 8000:8000`
+- Restore host Docker context:
+  - `eval $(minikube docker-env -u)`
+
 ### Check Kubernetes resources
 
 - Pods (running containers): `kubectl get pods`
