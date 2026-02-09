@@ -225,6 +225,7 @@ Steps:
 
 - Stop everything:
   - `minikube stop`
+  - `eval $(minikube docker-env -u)`
 - Resume later (no code changes):
   - `minikube start --driver=docker`
   - `kubectl port-forward svc/api 8000:8000`
