@@ -1,0 +1,75 @@
+@startuml
+!theme plain
+top to bottom direction
+
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam defaultFontSize 14
+
+' ----------------------------
+' Color palette (soft + professional)
+' ----------------------------
+skinparam component {
+  BackgroundColor #F9FAFB
+  BorderColor #374151
+}
+
+skinparam database {
+  BackgroundColor #EEF2FF
+  BorderColor #4338CA
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #111827
+}
+
+skinparam arrow {
+  Color #374151
+  Thickness 1.4
+}
+
+' ----------------------------
+' Kubernetes deployment view
+' ----------------------------
+rectangle "Kubernetes (Minikube) Deployment" {
+
+  component "React frontend\n(local dev server)" as FE #FFF7ED
+
+  rectangle "Kubernetes cluster" {
+    component "API Service" as SAPI #E0F2FE
+    component "API Deployment" as DAPI #F0FDF4
+
+    component "Celery Worker Deployment" as DWORKER #EDE9FE
+
+    component "RabbitMQ Service" as SRMQ #FEF3C7
+    component "RabbitMQ Deployment" as DRMQ #FEF3C7
+
+    component "Postgres Service" as SPG #EEF2FF
+    database "Postgres StatefulSet" as DPG {
+      component "PVC (postgres-data)" as PVC
+    }
+
+    component "ConfigMap + Secret" as CFG #F3F4F6
+
+    SAPI --> DAPI
+    SRMQ --> DRMQ
+    SPG --> DPG
+
+    DAPI --> SRMQ : enqueue tasks
+    SRMQ --> DWORKER : deliver tasks
+    DWORKER --> SPG : write query_events
+    DAPI --> SPG : read variants
+
+    CFG ..> DAPI
+    CFG ..> DWORKER
+    CFG ..> DPG
+  }
+
+  FE --> SAPI : /variants, /status
+}
+
+component "API tests" as T #FEE2E2
+T ..> SAPI
+
+@enduml

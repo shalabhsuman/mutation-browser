@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mutation-browser-config
+data:
+  DB_NAME: mutation_browser
+  DB_USER: mutation_user
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  POSTGRES_DB: mutation_browser
+  POSTGRES_USER: mutation_user
+  CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672//
+  CELERY_RESULT_BACKEND: rpc://
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mutation-browser-secrets
+type: Opaque
+stringData:
+  DB_PASSWORD: mutation_pass
+  POSTGRES_PASSWORD: mutation_pass
