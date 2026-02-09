@@ -129,7 +129,24 @@ The backend API and database are run using Docker Compose, while the frontend
 is served via a local development server.
 
 At a high level:
-- Docker Compose starts the API, PostgreSQL, RabbitMQ, and Celery worker services
-- The React frontend runs locally and queries the API over HTTP
+1. Start backend services (API + Postgres + RabbitMQ + Celery):
+   - `docker compose up -d`
+2. Start the frontend dev server:
+   - `cd frontend && npm run dev`
+3. Open the app:
+   - Frontend: http://localhost:5173
+   - API: http://localhost:8000/health
 
 Detailed run instructions are provided in the respective component directories.
+
+---
+
+## Async Request Flow (Query Logging)
+
+1. User enters a gene in the React UI and clicks Search.
+2. React calls `GET /variants?gene=<GENE>`.
+3. Flask generates a `request_id` and enqueues a log task.
+4. Flask queries Postgres and returns results immediately.
+5. RabbitMQ delivers the queued task to the Celery worker.
+6. The Celery worker writes a log row to `query_events`.
+7. (Optional) `GET /status/<REQUEST_ID>` returns the log status.
