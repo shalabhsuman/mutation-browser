@@ -234,6 +234,14 @@ Steps:
 - Docker Compose:
   - `docker compose exec -T postgres psql -U mutation_user -d mutation_browser -c "SELECT * FROM query_events ORDER BY id DESC LIMIT 10;"`
 
+### RabbitMQ Management UI
+
+- Docker Compose:
+  - http://localhost:15672 (user: guest, password: guest)
+- Minikube (Kubernetes):
+  - `kubectl port-forward svc/rabbitmq 15672:15672`
+  - http://localhost:15672 (user: guest, password: guest)
+
 ### Optional: migrate data from Docker Compose Postgres
 
 1. Export from Docker Compose:
