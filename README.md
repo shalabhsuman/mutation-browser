@@ -10,11 +10,11 @@ persistence and downstream consumption.
 ## Tech Stack
 
 - **Frontend:** React, Vite
-- **Backend:** Python, Flask, Flask-CORS, Gunicorn
+- **Backend:** Python, Flask, Flask-CORS, Gunicorn, Celery
 - **Database:** PostgreSQL
 - **Data Access:** psycopg2 (PostgreSQL driver)
-- **Infra/DevOps:** Docker, Docker Compose
-- **Architecture:** React frontend + Flask REST API + PostgreSQL database
+- **Infra/DevOps:** Docker, Docker Compose, RabbitMQ
+- **Architecture:** React frontend + Flask REST API + PostgreSQL database + async logging with Celery/RabbitMQ
 
 ---
 
@@ -26,6 +26,8 @@ The Mutation Browser system provides:
 - A batch ingestion mechanism for loading mutation data into the database
 - A Flask-based web API for querying mutations
 - A React-based frontend for interactive exploration
+- Asynchronous logging of query events using Celery and RabbitMQ
+- Background worker for audit and analytics tasks
 - Containerized deployment using Docker and Docker Compose
 
 The architecture cleanly separates data storage, application logic, and
@@ -38,6 +40,7 @@ presentation, and is suitable for local development as well as cloud deployment.
 - Mutation records are stored in a PostgreSQL database.
 - A Flask API queries the database using parameterized SQL.
 - A React frontend consumes API responses over HTTP.
+- A Celery worker consumes query-log tasks from RabbitMQ and writes to PostgreSQL.
 - Services are orchestrated locally using Docker Compose.
 
 <img src="docs/architecture.png" alt="Architecture diagram" height="500" width="300"/>
@@ -52,6 +55,9 @@ browser-based client.
 
 - `backend/`  
   Flask web service implementing the API layer
+
+- `backend/celery_app.py`  
+  Celery app configuration and async task definitions
 
 - `frontend/`  
   React application providing an interactive user interface
@@ -71,7 +77,7 @@ browser-based client.
 
 ## Database schema
 
-The database contains a single table for mutation records:
+The database contains tables for mutation records and query logging:
 
 **variants**
 - `sample_id`
@@ -79,6 +85,12 @@ The database contains a single table for mutation records:
 - `variant`
 - `vaf`
 - `tumor_type`
+
+**query_events**
+- `request_id`
+- `gene`
+- `requested_at`
+- `status`
 
 The schema is defined in `db/schema.sql`.
 
@@ -92,7 +104,10 @@ The schema is defined in `db/schema.sql`.
   Health check endpoint
 
 - `GET /variants?gene=<GENE>`  
-  Returns mutation records for the specified gene as JSON
+  Returns mutation records for the specified gene and a request ID
+
+- `GET /status/<REQUEST_ID>`  
+  Returns the async query-log status for a request ID
 
 ---
 
@@ -113,7 +128,7 @@ The backend API and database are run using Docker Compose, while the frontend
 is served via a local development server.
 
 At a high level:
-- Docker Compose starts the API and PostgreSQL services
+- Docker Compose starts the API, PostgreSQL, RabbitMQ, and Celery worker services
 - The React frontend runs locally and queries the API over HTTP
 
 Detailed run instructions are provided in the respective component directories.

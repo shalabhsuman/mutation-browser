@@ -5,6 +5,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [requestId, setRequestId] = useState(null);
 
   const searchVariants = async () => {
     if (!gene) {
@@ -15,6 +16,7 @@ function App() {
     setLoading(true);
     setError(null);
     setResults([]);
+    setRequestId(null);
 
     try {
       const response = await fetch(
@@ -26,7 +28,8 @@ function App() {
       }
 
       const data = await response.json();
-      setResults(data);
+      setResults(data.results || []);
+      setRequestId(data.request_id || null);
     } catch (err) {
       setError("Failed to fetch variants");
     } finally {
@@ -51,6 +54,11 @@ function App() {
 
       {loading && <p>Loading…</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {requestId && (
+        <p style={{ fontSize: "0.9rem", color: "#555" }}>
+          Request ID: {requestId}
+        </p>
+      )}
 
       {results.length > 0 && (
   <>

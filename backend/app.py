@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
 import os
+from uuid import uuid4
+from datetime import datetime, timezone
+
+from backend.celery_app import log_query_event
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +31,34 @@ def get_connection():
 def health():
     return jsonify({"status": "ok"})
 
+@app.route("/status/<request_id>", methods=["GET"])
+def get_status(request_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT request_id, gene, requested_at, status
+        FROM query_events
+        WHERE request_id = %s
+        """,
+        (request_id,)
+    )
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if not row:
+        return jsonify({"error": "request_id not found"}), 404
+
+    return jsonify({
+        "request_id": row[0],
+        "gene": row[1],
+        "requested_at": row[2].isoformat(),
+        "status": row[3],
+    })
+
 
 @app.route("/variants", methods=["GET"])
 def get_variants():
@@ -34,6 +66,17 @@ def get_variants():
 
     if not gene:
         return jsonify({"error": "gene parameter is required"}), 400
+
+    request_id = str(uuid4())
+    payload = {
+        "request_id": request_id,
+        "gene": gene,
+        "requested_at": datetime.now(timezone.utc).isoformat(),
+        "status": "received",
+    }
+
+    # Fire-and-forget async logging (do not block request/response).
+    log_query_event.delay(payload)
 
     conn = get_connection()
     cur = conn.cursor()
@@ -62,7 +105,10 @@ def get_variants():
             "tumor_type": r[4],
         })
 
-    return jsonify(results)
+    return jsonify({
+        "request_id": request_id,
+        "results": results,
+    })
 
 
 if __name__ == "__main__":

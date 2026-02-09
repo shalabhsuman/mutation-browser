@@ -1,6 +1,13 @@
 version: "3.8"
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: mutation-browser-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   postgres:
     image: postgres:16
     container_name: mutation-browser-postgres
@@ -20,6 +27,7 @@ services:
     image: shalabhsuman/mutation-browser-api:0.1.0
     container_name: mutation-browser-api
     depends_on:
+      - rabbitmq
       - postgres
     environment:
       DB_NAME: mutation_browser
@@ -27,8 +35,29 @@ services:
       DB_PASSWORD: mutation_pass
       DB_HOST: postgres
       DB_PORT: 5432
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672//
+      CELERY_RESULT_BACKEND: rpc://
     ports:
       - "8000:5000"
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: shalabhsuman/mutation-browser-api:0.1.0
+    container_name: mutation-browser-celery-worker
+    depends_on:
+      - rabbitmq
+      - postgres
+    environment:
+      DB_NAME: mutation_browser
+      DB_USER: mutation_user
+      DB_PASSWORD: mutation_pass
+      DB_HOST: postgres
+      DB_PORT: 5432
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672//
+      CELERY_RESULT_BACKEND: rpc://
+    command: celery -A backend.celery_app.celery_app worker --loglevel=info
 
 volumes:
   postgres_data:
