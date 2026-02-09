@@ -43,7 +43,7 @@ presentation, and is suitable for local development as well as cloud deployment.
 - A Celery worker consumes query-log tasks from RabbitMQ and writes to PostgreSQL.
 - Services are orchestrated locally using Docker Compose.
 
-<img src="docs/architecture.png" alt="Architecture diagram" height="500" width="300"/>
+<img src="docs/architecture.png" alt="Architecture diagram" height="500" width="600"/>
 
 This diagram illustrates the flow of mutation data from ingestion through
 persistent storage and into a stateless web API, which is then consumed by a
